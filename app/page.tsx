@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 type Screen = { title: string; file: string }
 
@@ -45,7 +45,27 @@ export default function Home() {
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [draftTitle, setDraftTitle] = useState('')
+  const [storageReady, setStorageReady] = useState(false)
   const current = orderedScreens[selected]
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem('me-extra-menu-order')
+    if (saved) {
+      try {
+        const savedScreens = JSON.parse(saved) as Screen[]
+        if (Array.isArray(savedScreens) && savedScreens.length === screens.length && savedScreens.every((screen) => screen.file)) {
+          setOrderedScreens(savedScreens)
+        }
+      } catch {
+        window.localStorage.removeItem('me-extra-menu-order')
+      }
+    }
+    setStorageReady(true)
+  }, [])
+
+  useEffect(() => {
+    if (storageReady) window.localStorage.setItem('me-extra-menu-order', JSON.stringify(orderedScreens))
+  }, [orderedScreens, storageReady])
 
   function startEditing(index: number) { setEditingIndex(index); setDraftTitle(orderedScreens[index].title) }
   function saveTitle() {
