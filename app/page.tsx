@@ -9,6 +9,7 @@ const screens: Screen[] = [
   { title: 'Ingreso Extra', file: 'Ingreso Extra.png' },
   { title: 'Login — email', file: 'ml_login_email.png' },
   { title: 'Login — clave', file: 'ml_login_clave.png' },
+  { title: 'Passo 5', file: 'passo-5.svg' },
   { title: 'Elegir país', file: 'Elegir pais.png' },
   { title: 'Bienvenida', file: 'Bienvenida.png' },
   { title: 'Bienvenida — estado 2', file: 'Bienvenida-1.png' },
