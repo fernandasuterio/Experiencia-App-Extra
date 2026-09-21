@@ -13,6 +13,7 @@ const screens: Screen[] = [
   { title: 'Elegir país', file: 'Elegir pais.png' },
   { title: 'Bienvenida', file: 'Bienvenida.png' },
   { title: 'Passo 8', file: 'passo-8.svg' },
+  { title: 'Passo 9', file: 'passo-9.svg' },
   { title: 'Bienvenida — estado 2', file: 'Bienvenida-1.png' },
   { title: 'Bienvenida — estado 3', file: 'Bienvenida-2.png' },
   { title: 'HUB', file: 'HUB.png' },
