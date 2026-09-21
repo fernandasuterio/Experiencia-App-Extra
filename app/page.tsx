@@ -39,36 +39,33 @@ const screens: Screen[] = [
 ]
 
 export default function Home() {
-  const [orderedScreens, setOrderedScreens] = useState(screens)
+  const storageKey = 'me-extra-menu-state'
+  const [orderedScreens, setOrderedScreens] = useState<Screen[]>(() => {
+    if (typeof window === 'undefined') return screens
+    const saved = window.localStorage.getItem(storageKey) ?? window.localStorage.getItem('me-extra-menu-order')
+    if (!saved) return screens
+    try {
+      const savedScreens = JSON.parse(saved) as Screen[]
+      const hasValidFiles = Array.isArray(savedScreens) && savedScreens.length === screens.length && savedScreens.every((screen) => typeof screen.file === 'string' && screens.some((original) => original.file === screen.file))
+      const hasEveryScreenOnce = hasValidFiles && screens.every((original) => savedScreens.some((screen) => screen.file === original.file))
+      return hasEveryScreenOnce ? savedScreens.map((screen) => ({ file: screen.file, title: typeof screen.title === 'string' && screen.title.trim() ? screen.title : screens.find((original) => original.file === screen.file)!.title })) : screens
+    } catch {
+      window.localStorage.removeItem(storageKey)
+      window.localStorage.removeItem('me-extra-menu-order')
+      return screens
+    }
+  })
   const [selected, setSelected] = useState(0)
   const [menuOpen, setMenuOpen] = useState(true)
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [draftTitle, setDraftTitle] = useState('')
-  const [storageReady, setStorageReady] = useState(false)
   const current = orderedScreens[selected]
-  const storageKey = 'me-extra-menu-state'
 
   useEffect(() => {
-    const saved = window.localStorage.getItem(storageKey) ?? window.localStorage.getItem('me-extra-menu-order')
-    if (saved) {
-      try {
-        const savedScreens = JSON.parse(saved) as Screen[]
-        const hasValidFiles = Array.isArray(savedScreens) && savedScreens.length === screens.length && savedScreens.every((screen) => typeof screen.file === 'string' && screens.some((original) => original.file === screen.file))
-        const hasEveryScreenOnce = hasValidFiles && screens.every((original) => savedScreens.some((screen) => screen.file === original.file))
-        if (hasEveryScreenOnce) setOrderedScreens(savedScreens.map((screen) => ({ file: screen.file, title: typeof screen.title === 'string' && screen.title.trim() ? screen.title : screens.find((original) => original.file === screen.file)!.title })))
-      } catch {
-        window.localStorage.removeItem(storageKey)
-        window.localStorage.removeItem('me-extra-menu-order')
-      }
-    }
-    setStorageReady(true)
-  }, [])
-
-  useEffect(() => {
-    if (storageReady) window.localStorage.setItem(storageKey, JSON.stringify(orderedScreens))
-  }, [orderedScreens, storageReady])
+    window.localStorage.setItem(storageKey, JSON.stringify(orderedScreens))
+  }, [orderedScreens])
 
   function persistScreens(nextScreens: Screen[]) {
     setOrderedScreens(nextScreens)
