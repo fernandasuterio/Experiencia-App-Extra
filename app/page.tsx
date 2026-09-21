@@ -43,99 +43,41 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(true)
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+  const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  const [draftTitle, setDraftTitle] = useState('')
   const current = orderedScreens[selected]
 
-  function previous() {
-    setSelected((value) => Math.max(0, value - 1))
+  function startEditing(index: number) { setEditingIndex(index); setDraftTitle(orderedScreens[index].title) }
+  function saveTitle() {
+    if (editingIndex === null) return
+    const title = draftTitle.trim()
+    if (title) setOrderedScreens((items) => items.map((item, index) => index === editingIndex ? { ...item, title } : item))
+    setEditingIndex(null)
   }
-
-  function next() {
-    setSelected((value) => Math.min(orderedScreens.length - 1, value + 1))
-  }
-
   function moveScreen(fromIndex: number, toIndex: number) {
     if (fromIndex === toIndex) return
-
-    setOrderedScreens((items) => {
-      const nextItems = [...items]
-      const [movedScreen] = nextItems.splice(fromIndex, 1)
-      nextItems.splice(toIndex, 0, movedScreen)
-      return nextItems
-    })
-
-    setSelected((currentIndex) => {
-      if (currentIndex === fromIndex) return toIndex
-      if (fromIndex < currentIndex && toIndex >= currentIndex) return currentIndex - 1
-      if (fromIndex > currentIndex && toIndex <= currentIndex) return currentIndex + 1
-      return currentIndex
-    })
+    setOrderedScreens((items) => { const nextItems = [...items]; const [moved] = nextItems.splice(fromIndex, 1); nextItems.splice(toIndex, 0, moved); return nextItems })
+    setSelected((value) => value === fromIndex ? toIndex : fromIndex < value && toIndex >= value ? value - 1 : fromIndex > value && toIndex <= value ? value + 1 : value)
   }
+  const previous = () => setSelected((value) => Math.max(0, value - 1))
+  const next = () => setSelected((value) => Math.min(orderedScreens.length - 1, value + 1))
 
-  return (
-    <main className="experience-shell">
-      <header className="experience-header">
-        <button className="menu-button" aria-label={menuOpen ? 'Ocultar menu' : 'Mostrar menu'} onClick={() => setMenuOpen((value) => !value)}>
-          <span /><span /><span />
-        </button>
-        <div>
-          <p className="eyebrow">ME.EXTRA APP · FLOTILLEROS</p>
-          <h1>Visão completa da experiência</h1>
-        </div>
-        <span className="counter">{selected + 1} / {screens.length}</span>
-      </header>
-      <div className="experience-body">
-        <aside className={`flow-menu ${menuOpen ? '' : 'closed'}`} aria-label="Navegação das telas">
-          <div className="menu-heading"><span>Ordem do PDF</span><span>{screens.length} telas</span></div>
-          <nav>
-            {orderedScreens.map((screen, index) => (
-              <button
-                key={screen.file}
-                className={`flow-item ${index === selected ? 'selected' : ''} ${draggedIndex === index ? 'dragging' : ''} ${dragOverIndex === index ? 'drag-over' : ''}`}
-                onClick={() => setSelected(index)}
-                draggable
-                onDragStart={(event) => {
-                  event.dataTransfer.effectAllowed = 'move'
-                  event.dataTransfer.setData('text/plain', screen.file)
-                  setDraggedIndex(index)
-                }}
-                onDragEnd={() => {
-                  setDraggedIndex(null)
-                  setDragOverIndex(null)
-                }}
-                onDragOver={(event) => {
-                  event.preventDefault()
-                  event.dataTransfer.dropEffect = 'move'
-                  if (draggedIndex !== index) setDragOverIndex(index)
-                }}
-                onDragLeave={() => setDragOverIndex(null)}
-                onDrop={(event) => {
-                  event.preventDefault()
-                  if (draggedIndex !== null) moveScreen(draggedIndex, index)
-                  setDraggedIndex(null)
-                  setDragOverIndex(null)
-                }}
-                aria-label={`${screen.title}. Arraste para reordenar`}
-              >
-                <span className="drag-handle" aria-hidden="true">⋮⋮</span>
-                <span className="flow-index">{String(index + 1).padStart(2, '0')}</span>
-                <span>{screen.title}</span>
-              </button>
-            ))}
-          </nav>
-        </aside>
-        <section className="screen-stage" aria-live="polite">
-          <div className="stage-toolbar">
-            <div><span className="stage-dot" /> <strong>{current.title}</strong></div>
-            <div className="stage-actions">
-              <button onClick={previous} disabled={selected === 0}>Anterior</button>
-              <button onClick={next} disabled={selected === screens.length - 1}>Próxima</button>
-            </div>
-          </div>
-          <div className="screen-frame">
-            <img src={`/pdf/${encodeURIComponent(current.file)}`} alt={`Tela ${selected + 1}: ${current.title}`} />
-          </div>
-        </section>
-      </div>
-    </main>
-  )
+  return <main className="experience-shell">
+    <header className="experience-header">
+      <button className="menu-button" aria-label={menuOpen ? 'Ocultar menu' : 'Mostrar menu'} onClick={() => setMenuOpen((value) => !value)}><span /><span /><span /></button>
+      <div><p className="eyebrow">ME.EXTRA APP · FLOTILLEROS</p><h1>Visão completa da experiência</h1></div>
+      <span className="counter">{selected + 1} / {orderedScreens.length}</span>
+    </header>
+    <div className="experience-body">
+      <aside className={`flow-menu ${menuOpen ? '' : 'closed'}`} aria-label="Navegação das telas">
+        <div className="menu-heading"><span>Ordem do PDF</span><span>{orderedScreens.length} telas</span></div>
+        <nav>{orderedScreens.map((screen, index) => <div key={screen.file} className={`flow-item ${index === selected ? 'selected' : ''} ${draggedIndex === index ? 'dragging' : ''} ${dragOverIndex === index ? 'drag-over' : ''}`} onClick={() => editingIndex !== index && setSelected(index)} draggable role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') setSelected(index) }} onDragStart={(event) => { event.dataTransfer.effectAllowed = 'move'; setDraggedIndex(index) }} onDragEnd={() => { setDraggedIndex(null); setDragOverIndex(null) }} onDragOver={(event) => { event.preventDefault(); if (draggedIndex !== index) setDragOverIndex(index) }} onDragLeave={() => setDragOverIndex(null)} onDrop={(event) => { event.preventDefault(); if (draggedIndex !== null) moveScreen(draggedIndex, index); setDraggedIndex(null); setDragOverIndex(null) }} aria-label={`${screen.title}. Arraste para reordenar`}>
+          <span className="drag-handle" aria-hidden="true">⋮⋮</span><span className="flow-index">{String(index + 1).padStart(2, '0')}</span>
+          {editingIndex === index ? <input className="flow-name-input" value={draftTitle} autoFocus aria-label="Nome da tela" onChange={(event) => setDraftTitle(event.target.value)} onClick={(event) => event.stopPropagation()} onKeyDown={(event) => { event.stopPropagation(); if (event.key === 'Enter') saveTitle(); if (event.key === 'Escape') setEditingIndex(null) }} onBlur={saveTitle} /> : <span className="flow-name">{screen.title}</span>}
+          <button type="button" className="edit-name-button" aria-label={`Editar nome de ${screen.title}`} onClick={(event) => { event.stopPropagation(); startEditing(index) }}>Editar</button>
+        </div>)}</nav>
+      </aside>
+      <section className="screen-stage" aria-live="polite"><div className="stage-toolbar"><div><span className="stage-dot" /> <strong>{current.title}</strong></div><div className="stage-actions"><button onClick={previous} disabled={selected === 0}>Anterior</button><button onClick={next} disabled={selected === orderedScreens.length - 1}>Próxima</button></div></div><div className="screen-frame"><img src={`/pdf/${encodeURIComponent(current.file)}`} alt={`Tela ${selected + 1}: ${current.title}`} /></div></section>
+    </div>
+  </main>
 }
