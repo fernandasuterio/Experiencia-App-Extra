@@ -42,6 +42,7 @@ export default function Home() {
   const [selected, setSelected] = useState(0)
   const [menuOpen, setMenuOpen] = useState(true)
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   const current = orderedScreens[selected]
 
   function previous() {
@@ -89,15 +90,29 @@ export default function Home() {
             {orderedScreens.map((screen, index) => (
               <button
                 key={screen.file}
-                className={`flow-item ${index === selected ? 'selected' : ''} ${draggedIndex === index ? 'dragging' : ''}`}
+                className={`flow-item ${index === selected ? 'selected' : ''} ${draggedIndex === index ? 'dragging' : ''} ${dragOverIndex === index ? 'drag-over' : ''}`}
                 onClick={() => setSelected(index)}
                 draggable
-                onDragStart={() => setDraggedIndex(index)}
-                onDragEnd={() => setDraggedIndex(null)}
-                onDragOver={(event) => event.preventDefault()}
-                onDrop={() => {
+                onDragStart={(event) => {
+                  event.dataTransfer.effectAllowed = 'move'
+                  event.dataTransfer.setData('text/plain', screen.file)
+                  setDraggedIndex(index)
+                }}
+                onDragEnd={() => {
+                  setDraggedIndex(null)
+                  setDragOverIndex(null)
+                }}
+                onDragOver={(event) => {
+                  event.preventDefault()
+                  event.dataTransfer.dropEffect = 'move'
+                  if (draggedIndex !== index) setDragOverIndex(index)
+                }}
+                onDragLeave={() => setDragOverIndex(null)}
+                onDrop={(event) => {
+                  event.preventDefault()
                   if (draggedIndex !== null) moveScreen(draggedIndex, index)
                   setDraggedIndex(null)
+                  setDragOverIndex(null)
                 }}
                 aria-label={`${screen.title}. Arraste para reordenar`}
               >

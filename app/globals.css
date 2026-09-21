@@ -20,6 +20,7 @@ button { font: inherit; cursor: pointer; }
 .flow-item:hover { background: #f5f5f5; }
 .flow-item[draggable="true"] { cursor: grab; }
 .flow-item.dragging { opacity: .45; cursor: grabbing; }
+.flow-item.drag-over { background: #fff4cc; outline: 2px dashed var(--yellow); outline-offset: -2px; }
 .drag-handle { width: 10px; color: #9b9b9b; font-size: 14px; letter-spacing: -3px; line-height: 1; }
 .flow-item.selected .drag-handle { color: var(--blue); }
 .flow-item.selected { background: #eaf2ff; color: #1d5ec0; font-weight: 700; }
