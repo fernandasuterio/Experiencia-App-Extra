@@ -48,9 +48,16 @@ export default function Home() {
     if (saved) {
       try {
         const savedScreens = JSON.parse(saved) as Screen[]
-        const hasValidFiles = Array.isArray(savedScreens) && savedScreens.length === screens.length && savedScreens.every((screen) => typeof screen.file === 'string' && screens.some((original) => original.file === screen.file))
-        const hasEveryScreenOnce = hasValidFiles && screens.every((original) => savedScreens.some((screen) => screen.file === original.file))
-        if (hasEveryScreenOnce) setOrderedScreens(savedScreens.map((screen) => ({ file: screen.file, title: typeof screen.title === 'string' && screen.title.trim() ? screen.title : screens.find((original) => original.file === screen.file)!.title })))
+        if (Array.isArray(savedScreens)) {
+          const remainingDefaults = [...screens]
+          const restoredScreens = savedScreens.flatMap((savedScreen) => {
+            const matchIndex = remainingDefaults.findIndex((original) => original.file === savedScreen.file)
+            if (matchIndex === -1) return []
+            const [original] = remainingDefaults.splice(matchIndex, 1)
+            return [{ file: original.file, title: typeof savedScreen.title === 'string' && savedScreen.title.trim() ? savedScreen.title : original.title }]
+          })
+          setOrderedScreens([...restoredScreens, ...remainingDefaults])
+        }
       } catch {
         window.localStorage.removeItem(storageKey)
         window.localStorage.removeItem('me-extra-menu-order')
@@ -58,6 +65,12 @@ export default function Home() {
     }
     setHydrated(true)
   }, [])
+
+  useEffect(() => {
+    if (!hydrated) return
+    const saved = window.localStorage.getItem(storageKey)
+    if (!saved) window.localStorage.setItem(storageKey, JSON.stringify(screens))
+  }, [hydrated])
   const [selected, setSelected] = useState(0)
   const [menuOpen, setMenuOpen] = useState(true)
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
