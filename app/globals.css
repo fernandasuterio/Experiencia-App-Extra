@@ -1,0 +1,28 @@
+@import 'tailwindcss';
+
+:root { --background: #fff; --foreground: #242424; --blue: #3483fa; --yellow: #ffe600; --muted: #737373; --line: #e5e5e5; }
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; background: #f4f4f4; color: var(--foreground); font-family: Arial, Helvetica, sans-serif; }
+button, input { font: inherit; }
+button { border: 0; background: none; cursor: pointer; }
+.phone-shell { width: 100%; max-width: 420px; min-height: 100vh; margin: 0 auto; background: #fff; }
+.screen { min-height: 100vh; background: #fff; position: relative; }
+.yellow-status { height: 24px; background: var(--yellow); }
+.back { position: absolute; top: 29px; left: 16px; width: 34px; height: 34px; z-index: 2; font-size: 39px; line-height: 25px; font-weight: 200; color: #222; }
+.login-content { padding: 68px 20px 0; }
+h1 { margin: 0; font-size: 24px; line-height: 1.2; font-weight: 600; letter-spacing: -.3px; }
+.login-content h1 { max-width: 335px; margin-bottom: 38px; font-size: 18px; line-height: 1.25; letter-spacing: .3px; }
+label { display: block; color: #555; font-size: 12px; margin: 0 6px 3px; }
+input#login { width: 100%; height: 45px; border: 2px solid var(--blue); border-radius: 6px; outline: none; margin-bottom: 32px; }
+.primary-button { width: 100%; height: 49px; border-radius: 6px; background: var(--blue); color: white; font-weight: 600; font-size: 15px; }
+.primary-button.disabled { background: #e1e1e1; color: #aaa; }
+.link { color: var(--blue); font-size: 14px; letter-spacing: .4px; }
+.login-content .link { display: block; width: 100%; margin-top: 14px; }
+.login-content .help { margin-top: 41px; font-size: 13px; }
+.recaptcha { margin-top: 45px; color: #aaa; text-align: center; font-size: 10px; }.recaptcha a { color: #8ab7ff; }
+.country-screen main, .welcome-screen main, .tariffs-screen main, .transport-screen main, .detail { padding: 50px 20px 20px; min-height: calc(100vh - 24px); display: flex; flex-direction: column; }
+.country-screen h1 { margin-bottom: 59px; }
+.country-list { display: grid; gap: 25px; }.radio-row { display: flex; align-items: center; gap: 13px; font-size: 16px; color: #333; margin: 0; }.radio-row input { appearance: none; width: 17px; height: 17px; border: 2px solid #c7c7c7; border-radius: 50%; margin: 0; }.radio-row input:checked { border-color: var(--blue); box-shadow: inset 0 0 0 4px #fff; background: var(--blue); }.country-screen .primary-button { margin-top: auto; }
+.welcome-screen main { padding-top: 57px; }.intro { margin: 14px 0 37px; font-size: 16px; line-height: 1.25; }.checklist { display: grid; gap: 9px; }.check-item { display: flex; text-align: left; align-items: center; gap: 14px; min-height: 58px; padding: 5px 8px; position: relative; }.check-item.active { background: #fff; box-shadow: 0 3px 16px #00000013; border-radius: 5px; padding: 12px 10px; }.item-icon { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid #e5e5e5; border-radius: 50%; color: var(--blue); font-size: 23px; }.item-icon.done { background: #f8f8f8; color: #00a650; font-size: 16px; }.item-copy { display: grid; gap: 4px; }.item-copy strong { font-size: 16px; font-weight: 400; }.item-copy small { color: #777; font-size: 14px; }.complete { margin-left: auto; padding: 9px 14px; background: var(--blue); color: #fff; border-radius: 5px; font-size: 14px; }.account { margin: auto 0 42px; text-align: left; padding-left: 50px; font-weight: 600; }
+header { height: 56px; background: var(--yellow); display: flex; align-items: center; gap: 14px; padding-left: 51px; box-shadow: 0 2px 4px #0002; font-size: 16px; }header .back { top: 34px; left: 14px; }.tariffs-screen main, .transport-screen main { padding-top: 38px; }.large-intro { font-size: 17px; line-height: 1.45; margin: 14px 0 37px; }.tariff-list { box-shadow: 0 3px 11px #00000016; margin-bottom: auto; }.tariff-row { display: flex; width: 100%; align-items: center; text-align: left; gap: 12px; padding: 18px 16px; border-bottom: 1px solid #ddd; }.tariff-row span { display: grid; gap: 13px; flex: 1; }.tariff-row strong { font-size: 18px; font-weight: 400; }.tariff-row small { color: #777; font-size: 17px; }.tariff-row em { background: #eee; color: #777; font-style: normal; font-weight: 600; border-radius: 20px; padding: 6px 12px; }.tariff-row b { color: var(--blue); font-size: 32px; font-weight: 300; }.tariffs-screen .primary-button { margin-top: 50px; }.transport-screen h1 { margin-bottom: 14px; }.transport-screen p { font-size: 16px; line-height: 1.35; margin: 0 0 20px; }.soft-button { height: 48px; border-radius: 6px; background: #e3eefc; color: var(--blue); font-weight: 600; }.add-self { text-align: left; margin-top: 37px; font-weight: 600; }.email-row { border-bottom: 1px solid #ddd; color: #888; padding: 15px 0 12px; font-size: 14px; }.transport-screen .primary-button { margin-top: auto; }.detail h1 { margin-top: 10px; }.detail p { font-size: 16px; line-height: 1.4; }.empty-detail { flex: 1; }.feedback { align-items: center; justify-content: center; text-align: center; }.feedback p { font-size: 17px; }
+@media (min-width: 421px) { .phone-shell { min-height: 760px; box-shadow: 0 0 30px #0002; } }
