@@ -47,16 +47,18 @@ export default function Home() {
   const [draftTitle, setDraftTitle] = useState('')
   const [storageReady, setStorageReady] = useState(false)
   const current = orderedScreens[selected]
+  const storageKey = 'me-extra-menu-state'
 
   useEffect(() => {
-    const saved = window.localStorage.getItem('me-extra-menu-order')
+    const saved = window.localStorage.getItem(storageKey) ?? window.localStorage.getItem('me-extra-menu-order')
     if (saved) {
       try {
         const savedScreens = JSON.parse(saved) as Screen[]
-        if (Array.isArray(savedScreens) && savedScreens.length === screens.length && savedScreens.every((screen) => screen.file)) {
-          setOrderedScreens(savedScreens)
-        }
+        const hasValidFiles = Array.isArray(savedScreens) && savedScreens.length === screens.length && savedScreens.every((screen) => typeof screen.file === 'string' && screens.some((original) => original.file === screen.file))
+        const hasEveryScreenOnce = hasValidFiles && new Set(savedScreens.map((screen) => screen.file)).size === screens.length
+        if (hasEveryScreenOnce) setOrderedScreens(savedScreens.map((screen) => ({ file: screen.file, title: typeof screen.title === 'string' && screen.title.trim() ? screen.title : screens.find((original) => original.file === screen.file)!.title })))
       } catch {
+        window.localStorage.removeItem(storageKey)
         window.localStorage.removeItem('me-extra-menu-order')
       }
     }
@@ -64,19 +66,26 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    if (storageReady) window.localStorage.setItem('me-extra-menu-order', JSON.stringify(orderedScreens))
+    if (storageReady) window.localStorage.setItem(storageKey, JSON.stringify(orderedScreens))
   }, [orderedScreens, storageReady])
 
+  function persistScreens(nextScreens: Screen[]) {
+    setOrderedScreens(nextScreens)
+    window.localStorage.setItem(storageKey, JSON.stringify(nextScreens))
+  }
   function startEditing(index: number) { setEditingIndex(index); setDraftTitle(orderedScreens[index].title) }
   function saveTitle() {
     if (editingIndex === null) return
     const title = draftTitle.trim()
-    if (title) setOrderedScreens((items) => items.map((item, index) => index === editingIndex ? { ...item, title } : item))
+    if (title) persistScreens(orderedScreens.map((item, index) => index === editingIndex ? { ...item, title } : item))
     setEditingIndex(null)
   }
   function moveScreen(fromIndex: number, toIndex: number) {
     if (fromIndex === toIndex) return
-    setOrderedScreens((items) => { const nextItems = [...items]; const [moved] = nextItems.splice(fromIndex, 1); nextItems.splice(toIndex, 0, moved); return nextItems })
+    const nextItems = [...orderedScreens]
+    const [moved] = nextItems.splice(fromIndex, 1)
+    nextItems.splice(toIndex, 0, moved)
+    persistScreens(nextItems)
     setSelected((value) => value === fromIndex ? toIndex : fromIndex < value && toIndex >= value ? value - 1 : fromIndex > value && toIndex <= value ? value + 1 : value)
   }
   const previous = () => setSelected((value) => Math.max(0, value - 1))
