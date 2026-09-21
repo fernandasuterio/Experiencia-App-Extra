@@ -12,7 +12,6 @@ const screens: Screen[] = [
   { title: 'Passo 5', file: 'passo-5.svg' },
   { title: 'Elegir país', file: 'Elegir pais.png' },
   { title: 'Bienvenida', file: 'Bienvenida.png' },
-  { title: 'Passo 8', file: 'passo-8.svg' },
   { title: 'Bienvenida — estado 3', file: 'Bienvenida-2.png' },
   { title: 'HUB', file: 'HUB.png' },
   { title: 'Datos del agregador', file: 'datos_agregador.png' },
