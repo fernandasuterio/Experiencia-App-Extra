@@ -15,7 +15,6 @@ const screens: Screen[] = [
   { title: 'Bienvenida — estado 2', file: 'Bienvenida-1.png' },
   { title: 'Bienvenida — estado 3', file: 'Bienvenida-2.png' },
   { title: 'HUB', file: 'HUB.png' },
-  { title: 'HUB', file: 'HUB.png' },
   { title: 'Datos del agregador', file: 'datos_agregador.png' },
   { title: 'Modalidad del agregador', file: 'modalidad_agregador.png' },
   { title: 'Modalidad del agregador — estado 2', file: 'modalidad_agregador-1.png' },
