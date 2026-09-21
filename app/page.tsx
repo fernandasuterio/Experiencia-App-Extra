@@ -14,6 +14,7 @@ const screens: Screen[] = [
   { title: 'Bienvenida — estado 2', file: 'Bienvenida-1.png' },
   { title: 'Bienvenida — estado 3', file: 'Bienvenida-2.png' },
   { title: 'HUB', file: 'HUB.png' },
+  { title: 'HUB', file: 'HUB.png' },
   { title: 'Datos del agregador', file: 'datos_agregador.png' },
   { title: 'Datos del agregador — estado 2', file: 'datos_agregador-1.png' },
   { title: 'Modalidad del agregador', file: 'modalidad_agregador.png' },
@@ -55,7 +56,7 @@ export default function Home() {
       try {
         const savedScreens = JSON.parse(saved) as Screen[]
         const hasValidFiles = Array.isArray(savedScreens) && savedScreens.length === screens.length && savedScreens.every((screen) => typeof screen.file === 'string' && screens.some((original) => original.file === screen.file))
-        const hasEveryScreenOnce = hasValidFiles && new Set(savedScreens.map((screen) => screen.file)).size === screens.length
+        const hasEveryScreenOnce = hasValidFiles && screens.every((original) => savedScreens.some((screen) => screen.file === original.file))
         if (hasEveryScreenOnce) setOrderedScreens(savedScreens.map((screen) => ({ file: screen.file, title: typeof screen.title === 'string' && screen.title.trim() ? screen.title : screens.find((original) => original.file === screen.file)!.title })))
       } catch {
         window.localStorage.removeItem(storageKey)
@@ -100,7 +101,7 @@ export default function Home() {
     <div className="experience-body">
       <aside className={`flow-menu ${menuOpen ? '' : 'closed'}`} aria-label="Navegação das telas">
         <div className="menu-heading"><span>Ordem do PDF</span><span>{orderedScreens.length} telas</span></div>
-        <nav>{orderedScreens.map((screen, index) => <div key={screen.file} className={`flow-item ${index === selected ? 'selected' : ''} ${draggedIndex === index ? 'dragging' : ''} ${dragOverIndex === index ? 'drag-over' : ''}`} onClick={() => editingIndex !== index && setSelected(index)} draggable role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') setSelected(index) }} onDragStart={(event) => { event.dataTransfer.effectAllowed = 'move'; setDraggedIndex(index) }} onDragEnd={() => { setDraggedIndex(null); setDragOverIndex(null) }} onDragOver={(event) => { event.preventDefault(); if (draggedIndex !== index) setDragOverIndex(index) }} onDragLeave={() => setDragOverIndex(null)} onDrop={(event) => { event.preventDefault(); if (draggedIndex !== null) moveScreen(draggedIndex, index); setDraggedIndex(null); setDragOverIndex(null) }} aria-label={`${screen.title}. Arraste para reordenar`}>
+        <nav>{orderedScreens.map((screen, index) => <div key={`${screen.file}-${index}`} className={`flow-item ${index === selected ? 'selected' : ''} ${draggedIndex === index ? 'dragging' : ''} ${dragOverIndex === index ? 'drag-over' : ''}`} onClick={() => editingIndex !== index && setSelected(index)} draggable role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') setSelected(index) }} onDragStart={(event) => { event.dataTransfer.effectAllowed = 'move'; setDraggedIndex(index) }} onDragEnd={() => { setDraggedIndex(null); setDragOverIndex(null) }} onDragOver={(event) => { event.preventDefault(); if (draggedIndex !== index) setDragOverIndex(index) }} onDragLeave={() => setDragOverIndex(null)} onDrop={(event) => { event.preventDefault(); if (draggedIndex !== null) moveScreen(draggedIndex, index); setDraggedIndex(null); setDragOverIndex(null) }} aria-label={`${screen.title}. Arraste para reordenar`}>
           <span className="drag-handle" aria-hidden="true">⋮⋮</span><span className="flow-index">{String(index + 1).padStart(2, '0')}</span>
           {editingIndex === index ? <input className="flow-name-input" value={draftTitle} autoFocus aria-label="Nome da tela" onChange={(event) => setDraftTitle(event.target.value)} onClick={(event) => event.stopPropagation()} onKeyDown={(event) => { event.stopPropagation(); if (event.key === 'Enter') saveTitle(); if (event.key === 'Escape') setEditingIndex(null) }} onBlur={saveTitle} /> : <span className="flow-name">{screen.title}</span>}
           <button type="button" className="edit-name-button" aria-label={`Editar nome de ${screen.title}`} onClick={(event) => { event.stopPropagation(); startEditing(index) }}>Editar</button>
