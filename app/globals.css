@@ -10,7 +10,13 @@ button { font: inherit; cursor: pointer; }
 .menu-button span { display: block; height: 2px; width: 20px; background: #202124; }
 .eyebrow { margin: 0 0 3px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 1.2px; }
 .experience-header h1 { margin: 0; font-size: 20px; font-weight: 600; }
-.counter { margin-left: auto; color: var(--muted); font-family: monospace; font-size: 13px; }
+  .header-actions { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+  .save-status { font-size: 11px; font-weight: 700; }
+  .save-status.saved { color: #17863b; }
+  .save-status.pending { color: #9a6700; }
+  .save-project-button { padding: 8px 12px; border: 1px solid #17863b; border-radius: 6px; background: #17863b; color: #fff; font-size: 12px; font-weight: 700; }
+  .save-project-button:disabled { border-color: #d8d8d8; background: #f3f3f3; color: #999; cursor: default; }
+  .counter { color: var(--muted); font-family: monospace; font-size: 13px; }
 .experience-body { display: flex; min-height: calc(100vh - 82px); }
 .flow-menu { flex: 0 0 310px; overflow: hidden; background: #fff; border-right: 1px solid var(--line); transition: flex-basis .2s ease; }
 .flow-menu.closed { flex-basis: 0; border-right: 0; }

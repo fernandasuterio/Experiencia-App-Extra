@@ -65,19 +65,23 @@ export default function Home() {
   const [draftTitle, setDraftTitle] = useState('')
   const current = orderedScreens[selected]
 
-  useEffect(() => {
-    if (hydrated) window.localStorage.setItem(storageKey, JSON.stringify(orderedScreens))
-  }, [orderedScreens, hydrated])
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
-  function persistScreens(nextScreens: Screen[]) {
+  function updateScreens(nextScreens: Screen[]) {
     setOrderedScreens(nextScreens)
-    window.localStorage.setItem(storageKey, JSON.stringify(nextScreens))
+    setHasUnsavedChanges(true)
+  }
+
+  function saveProject() {
+    window.localStorage.setItem(storageKey, JSON.stringify(orderedScreens))
+    window.localStorage.setItem('me-extra-menu-order', JSON.stringify(orderedScreens))
+    setHasUnsavedChanges(false)
   }
   function startEditing(index: number) { setEditingIndex(index); setDraftTitle(orderedScreens[index].title) }
   function saveTitle() {
     if (editingIndex === null) return
     const title = draftTitle.trim()
-    if (title) persistScreens(orderedScreens.map((item, index) => index === editingIndex ? { ...item, title } : item))
+    if (title) updateScreens(orderedScreens.map((item, index) => index === editingIndex ? { ...item, title } : item))
     setEditingIndex(null)
   }
   function moveScreen(fromIndex: number, toIndex: number) {
@@ -85,7 +89,7 @@ export default function Home() {
     const nextItems = [...orderedScreens]
     const [moved] = nextItems.splice(fromIndex, 1)
     nextItems.splice(toIndex, 0, moved)
-    persistScreens(nextItems)
+    updateScreens(nextItems)
     setSelected((value) => value === fromIndex ? toIndex : fromIndex < value && toIndex >= value ? value - 1 : fromIndex > value && toIndex <= value ? value + 1 : value)
   }
   const previous = () => setSelected((value) => Math.max(0, value - 1))
@@ -95,7 +99,11 @@ export default function Home() {
     <header className="experience-header">
       <button className="menu-button" aria-label={menuOpen ? 'Ocultar menu' : 'Mostrar menu'} onClick={() => setMenuOpen((value) => !value)}><span /><span /><span /></button>
       <div><p className="eyebrow">ME.EXTRA APP · FLOTILLEROS</p><h1>Visão completa da experiência</h1></div>
-      <span className="counter">{selected + 1} / {orderedScreens.length}</span>
+      <div className="header-actions">
+        <span className={`save-status ${hasUnsavedChanges ? 'pending' : 'saved'}`} aria-live="polite">{hasUnsavedChanges ? 'Alterações não salvas' : 'Projeto salvo'}</span>
+        <button className="save-project-button" type="button" onClick={saveProject} disabled={!hasUnsavedChanges}>{hasUnsavedChanges ? 'Salvar alterações' : 'Salvo'}</button>
+        <span className="counter">{selected + 1} / {orderedScreens.length}</span>
+      </div>
     </header>
     <div className="experience-body">
       <aside className={`flow-menu ${menuOpen ? '' : 'closed'}`} aria-label="Navegação das telas">
