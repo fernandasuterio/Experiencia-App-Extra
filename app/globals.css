@@ -34,8 +34,9 @@ button { font: inherit; cursor: pointer; }
  .flow-item.selected .flow-index { color: var(--blue); }
  .flow-name { flex: 1; overflow: hidden; text-overflow: ellipsis; }
  .flow-name-input { min-width: 0; flex: 1; border: 1px solid var(--blue); border-radius: 3px; padding: 3px 5px; background: #fff; color: #333; font: inherit; outline: none; }
- .edit-name-button { margin-left: auto; border: 0; background: transparent; color: #8b8b8b; font-size: 10px; opacity: 0; cursor: pointer; }
- .flow-item:hover .edit-name-button, .flow-item.selected .edit-name-button, .edit-name-button:focus-visible { opacity: 1; }
+.edit-name-button, .delete-screen-button { margin-left: auto; border: 0; background: transparent; color: #8b8b8b; font-size: 10px; opacity: 0; cursor: pointer; }
+  .delete-screen-button { margin-left: 0; color: #b34a4a; }
+  .flow-item:hover .edit-name-button, .flow-item.selected .edit-name-button, .edit-name-button:focus-visible, .flow-item:hover .delete-screen-button, .flow-item.selected .delete-screen-button, .delete-screen-button:focus-visible { opacity: 1; }
 
 .screen-stage { display: flex; flex: 1; min-width: 0; flex-direction: column; align-items: center; padding: 28px 24px 42px; }
 .stage-toolbar { display: flex; justify-content: space-between; width: min(100%, 760px); align-items: center; margin-bottom: 18px; color: #454545; font-size: 13px; }

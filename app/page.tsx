@@ -98,6 +98,14 @@ export default function Home() {
     setHasUnsavedChanges(false)
   }
   function startEditing(index: number) { setEditingIndex(index); setDraftTitle(orderedScreens[index].title) }
+  function deleteScreen(index: number) {
+    const screen = orderedScreens[index]
+    if (!window.confirm(`Excluir a tela “${screen.title}”?`)) return
+    const nextItems = orderedScreens.filter((_, itemIndex) => itemIndex !== index)
+    updateScreens(nextItems)
+    setSelected((value) => value > index ? value - 1 : Math.min(value, nextItems.length - 1))
+    if (editingIndex === index) setEditingIndex(null)
+  }
   function saveTitle() {
     if (editingIndex === null) return
     const title = draftTitle.trim()
@@ -131,7 +139,7 @@ export default function Home() {
         <nav>{orderedScreens.map((screen, index) => <div key={`${screen.file}-${index}`} className={`flow-item ${index === selected ? 'selected' : ''} ${draggedIndex === index ? 'dragging' : ''} ${dragOverIndex === index ? 'drag-over' : ''}`} onClick={() => editingIndex !== index && setSelected(index)} draggable role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') setSelected(index) }} onDragStart={(event) => { event.dataTransfer.effectAllowed = 'move'; setDraggedIndex(index) }} onDragEnd={() => { setDraggedIndex(null); setDragOverIndex(null) }} onDragOver={(event) => { event.preventDefault(); if (draggedIndex !== index) setDragOverIndex(index) }} onDragLeave={() => setDragOverIndex(null)} onDrop={(event) => { event.preventDefault(); if (draggedIndex !== null) moveScreen(draggedIndex, index); setDraggedIndex(null); setDragOverIndex(null) }} aria-label={`${screen.title}. Arraste para reordenar`}>
           <span className="drag-handle" aria-hidden="true">⋮⋮</span><span className="flow-index">{String(index + 1).padStart(2, '0')}</span>
           {editingIndex === index ? <input className="flow-name-input" value={draftTitle} autoFocus aria-label="Nome da tela" onChange={(event) => setDraftTitle(event.target.value)} onClick={(event) => event.stopPropagation()} onKeyDown={(event) => { event.stopPropagation(); if (event.key === 'Enter') saveTitle(); if (event.key === 'Escape') setEditingIndex(null) }} onBlur={saveTitle} /> : <span className="flow-name">{screen.title}</span>}
-          <button type="button" className="edit-name-button" aria-label={`Editar nome de ${screen.title}`} onClick={(event) => { event.stopPropagation(); startEditing(index) }}>Editar</button>
+          <button type="button" className="edit-name-button" aria-label={`Editar nome de ${screen.title}`} onClick={(event) => { event.stopPropagation(); startEditing(index) }}>Editar</button><button type="button" className="delete-screen-button" aria-label={`Excluir ${screen.title}`} onClick={(event) => { event.stopPropagation(); deleteScreen(index) }}>Excluir</button>
         </div>)}</nav>
       </aside>
       <section className="screen-stage" aria-live="polite"><div className="stage-toolbar"><div><span className="stage-dot" /> <strong>{current.title}</strong></div><div className="stage-actions"><button onClick={previous} disabled={selected === 0}>Anterior</button><button onClick={next} disabled={selected === orderedScreens.length - 1}>Próxima</button></div></div><div className="screen-frame"><img src={`/pdf/${encodeURIComponent(current.file)}`} alt={`Tela ${selected + 1}: ${current.title}`} /></div></section>
