@@ -38,16 +38,36 @@ const screens: Screen[] = [
 ]
 
 export default function Home() {
+  const [orderedScreens, setOrderedScreens] = useState(screens)
   const [selected, setSelected] = useState(0)
   const [menuOpen, setMenuOpen] = useState(true)
-  const current = screens[selected]
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+  const current = orderedScreens[selected]
 
   function previous() {
     setSelected((value) => Math.max(0, value - 1))
   }
 
   function next() {
-    setSelected((value) => Math.min(screens.length - 1, value + 1))
+    setSelected((value) => Math.min(orderedScreens.length - 1, value + 1))
+  }
+
+  function moveScreen(fromIndex: number, toIndex: number) {
+    if (fromIndex === toIndex) return
+
+    setOrderedScreens((items) => {
+      const nextItems = [...items]
+      const [movedScreen] = nextItems.splice(fromIndex, 1)
+      nextItems.splice(toIndex, 0, movedScreen)
+      return nextItems
+    })
+
+    setSelected((currentIndex) => {
+      if (currentIndex === fromIndex) return toIndex
+      if (fromIndex < currentIndex && toIndex >= currentIndex) return currentIndex - 1
+      if (fromIndex > currentIndex && toIndex <= currentIndex) return currentIndex + 1
+      return currentIndex
+    })
   }
 
   return (
@@ -66,8 +86,22 @@ export default function Home() {
         <aside className={`flow-menu ${menuOpen ? '' : 'closed'}`} aria-label="Navegação das telas">
           <div className="menu-heading"><span>Ordem do PDF</span><span>{screens.length} telas</span></div>
           <nav>
-            {screens.map((screen, index) => (
-              <button key={screen.file} className={`flow-item ${index === selected ? 'selected' : ''}`} onClick={() => setSelected(index)}>
+            {orderedScreens.map((screen, index) => (
+              <button
+                key={screen.file}
+                className={`flow-item ${index === selected ? 'selected' : ''} ${draggedIndex === index ? 'dragging' : ''}`}
+                onClick={() => setSelected(index)}
+                draggable
+                onDragStart={() => setDraggedIndex(index)}
+                onDragEnd={() => setDraggedIndex(null)}
+                onDragOver={(event) => event.preventDefault()}
+                onDrop={() => {
+                  if (draggedIndex !== null) moveScreen(draggedIndex, index)
+                  setDraggedIndex(null)
+                }}
+                aria-label={`${screen.title}. Arraste para reordenar`}
+              >
+                <span className="drag-handle" aria-hidden="true">⋮⋮</span>
                 <span className="flow-index">{String(index + 1).padStart(2, '0')}</span>
                 <span>{screen.title}</span>
               </button>
