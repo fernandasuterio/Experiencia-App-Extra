@@ -17,7 +17,6 @@ const screens: Screen[] = [
   { title: 'HUB', file: 'HUB.png' },
   { title: 'HUB', file: 'HUB.png' },
   { title: 'Datos del agregador', file: 'datos_agregador.png' },
-  { title: 'Datos del agregador — estado 2', file: 'datos_agregador-1.png' },
   { title: 'Modalidad del agregador', file: 'modalidad_agregador.png' },
   { title: 'Modalidad del agregador — estado 2', file: 'modalidad_agregador-1.png' },
   { title: 'Operación y vehículo', file: 'operacion.png' },
