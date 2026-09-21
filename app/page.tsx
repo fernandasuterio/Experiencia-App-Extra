@@ -12,6 +12,7 @@ const screens: Screen[] = [
   { title: 'Passo 5', file: 'passo-5.svg' },
   { title: 'Elegir país', file: 'Elegir pais.png' },
   { title: 'Bienvenida', file: 'Bienvenida.png' },
+  { title: 'Passo 8', file: 'passo-8.svg' },
   { title: 'Bienvenida — estado 2', file: 'Bienvenida-1.png' },
   { title: 'Bienvenida — estado 3', file: 'Bienvenida-2.png' },
   { title: 'HUB', file: 'HUB.png' },
@@ -54,7 +55,14 @@ export default function Home() {
             const [original] = remainingDefaults.splice(matchIndex, 1)
             return [{ file: original.file, title: typeof savedScreen.title === 'string' && savedScreen.title.trim() ? savedScreen.title : original.title }]
           })
-          setOrderedScreens([...restoredScreens, ...remainingDefaults])
+          const mergedScreens = [...restoredScreens]
+          remainingDefaults.forEach((missingScreen) => {
+            const missingPosition = screens.findIndex((screen) => screen.file === missingScreen.file)
+            const insertAt = mergedScreens.findIndex((screen) => screens.findIndex((defaultScreen) => defaultScreen.file === screen.file) > missingPosition)
+            if (insertAt === -1) mergedScreens.push(missingScreen)
+            else mergedScreens.splice(insertAt, 0, missingScreen)
+          })
+          setOrderedScreens(mergedScreens)
         }
       } catch {
         window.localStorage.removeItem(storageKey)
