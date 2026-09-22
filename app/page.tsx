@@ -27,6 +27,7 @@ const screens: Screen[] = [
   { title: 'Registro del vehículo — estado 3', file: 'registro_vehiculo-2.png' },
   { title: 'Ubicación', file: 'ubicacion.png' },
   { title: 'Validación CNH', file: 'kyc.png' },
+  { title: 'HUB - Identidad', file: 'hub-identidad.svg' },
   { title: 'Preferencias SVC', file: 'preferencias.png' },
   { title: 'Tarifas', file: 'Tarifas.png' },
   { title: 'Tarifas — estado 2', file: 'Tarifas-1.png' },
@@ -129,7 +130,7 @@ export default function Home() {
       <div><p className="eyebrow">ME.EXTRA APP · FLOTILLEROS</p><h1>Visão completa da experiência</h1></div>
       <div className="header-actions">
         <span className={`save-status ${hasUnsavedChanges ? 'pending' : 'saved'}`} aria-live="polite">{hasUnsavedChanges ? 'Alterações não salvas' : 'Projeto salvo'}</span>
-        <button className="save-project-button" type="button" onClick={saveProject} disabled={!hasUnsavedChanges}>{hasUnsavedChanges ? 'Salvar alterações' : 'Salvo'}</button>
+        <button className="save-project-button" type="button" onClick={saveProject}>Salvar projeto</button>
         <span className="counter">{selected + 1} / {orderedScreens.length}</span>
       </div>
     </header>
