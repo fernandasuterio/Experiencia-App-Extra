@@ -50,35 +50,24 @@ export default function Home() {
       try {
         const savedScreens = JSON.parse(saved) as Screen[]
         if (Array.isArray(savedScreens)) {
-          const remainingDefaults = [...screens]
           const restoredScreens = savedScreens.flatMap((savedScreen) => {
-            const matchIndex = remainingDefaults.findIndex((original) => original.file === savedScreen.file)
-            if (matchIndex === -1) return []
-            const [original] = remainingDefaults.splice(matchIndex, 1)
-            return [{ file: original.file, title: typeof savedScreen.title === 'string' && savedScreen.title.trim() ? savedScreen.title : original.title }]
+            const original = screens.find((screen) => screen.file === savedScreen.file)
+            if (!original) return []
+            return [{ ...original, title: typeof savedScreen.title === 'string' && savedScreen.title.trim() ? savedScreen.title : original.title }]
           })
-          const mergedScreens = [...restoredScreens]
-          remainingDefaults.forEach((missingScreen) => {
-            const missingPosition = screens.findIndex((screen) => screen.file === missingScreen.file)
-            const insertAt = mergedScreens.findIndex((screen) => screens.findIndex((defaultScreen) => defaultScreen.file === screen.file) > missingPosition)
-            if (insertAt === -1) mergedScreens.push(missingScreen)
-            else mergedScreens.splice(insertAt, 0, missingScreen)
-          })
-          setOrderedScreens(mergedScreens)
+          if (restoredScreens.length > 0) setOrderedScreens(restoredScreens)
         }
       } catch {
         window.localStorage.removeItem(storageKey)
         window.localStorage.removeItem('me-extra-menu-order')
       }
+    } else {
+      const initialState = JSON.stringify(screens)
+      window.localStorage.setItem(storageKey, initialState)
+      window.localStorage.setItem('me-extra-menu-order', initialState)
     }
     setHydrated(true)
   }, [])
-
-  useEffect(() => {
-    if (!hydrated) return
-    const saved = window.localStorage.getItem(storageKey)
-    if (!saved) window.localStorage.setItem(storageKey, JSON.stringify(screens))
-  }, [hydrated])
   const [selected, setSelected] = useState(0)
   const [menuOpen, setMenuOpen] = useState(true)
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
@@ -124,6 +113,8 @@ export default function Home() {
   }
   const previous = () => setSelected((value) => Math.max(0, value - 1))
   const next = () => setSelected((value) => Math.min(orderedScreens.length - 1, value + 1))
+
+  if (!hydrated) return <main className="experience-shell loading-state">Carregando projeto salvo…</main>
 
   return <main className="experience-shell">
     <header className="experience-header">

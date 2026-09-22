@@ -5,6 +5,7 @@
 html, body { margin: 0; min-height: 100%; background: var(--background); color: var(--foreground); font-family: Arial, Helvetica, sans-serif; }
 button { font: inherit; cursor: pointer; }
 .experience-shell { min-height: 100vh; }
+.loading-state { display: grid; place-items: center; color: var(--muted); font-size: 14px; }
 .experience-header { height: 82px; display: flex; align-items: center; gap: 18px; padding: 0 30px; background: #fff; border-bottom: 1px solid var(--line); }
 .menu-button { width: 38px; height: 38px; display: grid; align-content: center; gap: 5px; padding: 8px; border: 1px solid #ddd; border-radius: 6px; background: #fff; }
 .menu-button span { display: block; height: 2px; width: 20px; background: #202124; }
