@@ -13,7 +13,6 @@ const screens: Screen[] = [
   { title: 'Passo 8', file: 'passo-8.svg' },
   { title: 'Elegir país', file: 'Elegir pais.png' },
   { title: 'Bienvenida', file: 'Bienvenida.png' },
-  { title: 'Bienvenida — estado 2', file: 'Bienvenida-2.png' },
   { title: 'Passo 9', file: 'passo-9.svg' },
   { title: 'HUB - Entrada', file: 'hub-intermedio.svg' },
   { title: 'HUB', file: 'HUB.png' },
@@ -56,15 +55,7 @@ export default function Home() {
             if (!original) return []
             return [{ ...original, title: typeof savedScreen.title === 'string' && savedScreen.title.trim() ? savedScreen.title : original.title }]
           })
-          const missingScreens = screens.filter((screen) => !restoredScreens.some((savedScreen) => savedScreen.file === screen.file))
-          const restoredWithMissing = [...restoredScreens]
-          missingScreens.forEach((screen) => {
-            const canonicalIndex = screens.findIndex((item) => item.file === screen.file)
-            const nextCanonicalScreen = screens.slice(canonicalIndex + 1).find((item) => restoredWithMissing.some((savedScreen) => savedScreen.file === item.file))
-            const insertAt = nextCanonicalScreen ? restoredWithMissing.findIndex((item) => item.file === nextCanonicalScreen.file) : restoredWithMissing.length
-            restoredWithMissing.splice(insertAt, 0, screen)
-          })
-          if (restoredWithMissing.length > 0) setOrderedScreens(restoredWithMissing)
+          if (restoredScreens.length > 0) setOrderedScreens(restoredScreens)
         }
       } catch {
         window.localStorage.removeItem(storageKey)
